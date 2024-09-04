@@ -1,0 +1,17 @@
+<facebook-table
+  [headers]="headers"
+  [dataTable]="orders"
+  [isEditMode]="isEditMode"
+  (valueChanged)="valueChanged($event)"
+  (contextMenuOutput)="contextMenuClick($event)"
+  (selectMultiItems)="selectedItems = $event"
+  [selectedItems]="selectedItems"
+  [isLoading]="isLoading"
+></facebook-table>
+
+<div class="flat-button-add">
+  <p-speedDial
+    [model]="actionMenuItems"
+    [hideOnClickOutside]="false"
+  ></p-speedDial>
+</div>

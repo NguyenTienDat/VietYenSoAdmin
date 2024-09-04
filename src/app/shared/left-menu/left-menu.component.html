@@ -1,0 +1,71 @@
+<div
+  class="sidebar"
+  [ngClass]="{
+    open: firebaseService.IS_OPEN_MENU$ | async,
+    'd-none': !(firebaseService.IS_SHOW_MENU$ | async)
+  }"
+>
+  <div class="logo-details">
+    <i class="pi pi-globe icon"></i>
+    <div
+      class="logo_name"
+      [ngClass]="{ 'd-none': !(firebaseService.IS_OPEN_MENU$ | async) }"
+    >
+      Damie Kids
+    </div>
+    <i
+      class="pi"
+      [ngClass]="
+        (firebaseService.IS_OPEN_MENU$ | async)
+          ? 'pi-align-right'
+          : 'pi-align-justify'
+      "
+      id="btn"
+      (click)="btnClick()"
+    >
+    </i>
+  </div>
+  <ul class="nav-list">
+    <ng-container *ngFor="let item of leftMenu">
+      <li
+        *ngIf="item.path"
+        [routerLink]="item.path"
+        routerLinkActive="menu-active"
+      >
+        <a href="javascript:void(0)">
+          <i [ngClass]="item.icon"></i>
+          <span class="links_name">{{ item.name }}</span>
+        </a>
+        <span class="tooltip">{{ item.tooltip }}</span>
+      </li>
+    </ng-container>
+    <li class="profile">
+      <div class="profile-details">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/768px-User_icon_2.svg.png"
+          alt="profileImg"
+        />
+        <div class="name_job">
+          <div class="name">
+            {{ authService.CURRENT_USER.value?.displayName }}
+          </div>
+          <div class="job text-danger cursor-pointer" (click)="logout()">
+            Logout
+          </div>
+        </div>
+      </div>
+      <i
+        class="pi pi-chevron-left cursor-pointer"
+        id="log_out"
+        (click)="showMenu(false)"
+      ></i>
+    </li>
+  </ul>
+</div>
+
+<p-button
+  class="flat-button-menu"
+  icon="pi pi-chevron-right"
+  styleClass="p-button-rounded p-button-text"
+  (onClick)="showMenu(true)"
+></p-button>

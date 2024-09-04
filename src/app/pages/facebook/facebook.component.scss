@@ -1,0 +1,17 @@
+::ng-deep facebook-table {
+  .image-col img {
+    width: 100px;
+  }
+}
+
+:host ::ng-deep {
+  .flat-button-add {
+    position: fixed;
+    bottom: 320px;
+    right: 80px;
+
+    .p-speeddial-action {
+      text-decoration: none;
+    }
+  }
+}

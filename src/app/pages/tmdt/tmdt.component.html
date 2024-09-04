@@ -1,0 +1,15 @@
+<tmdt-table
+  [headers]="headers"
+  [dataTable]="orders"
+  (valueChanged)="valueChanged($event)"
+  (contextMenuOutput)="contextMenuClick($event)"
+  [isLoading]="isLoading"
+></tmdt-table>
+
+<div class="flat-button-add">
+  <p-speedDial
+    [model]="actionMenuItems"
+    [hideOnClickOutside]="false"
+    (onClick)="showAddModal()"
+  ></p-speedDial>
+</div>
