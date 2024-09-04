@@ -33,22 +33,15 @@ export const enum STATUS_DROPDOWN {
   DELETED = 4,
   NOT_ORDER_YET = 5,
 }
-export interface FacebookProduct {
-  CNY_price?: number;
-  created?: number;
-  customer?: string;
-  description?: string;
-  imageLink?: string;
-  orderID?: string;
-  price?: number;
-  price2?: number;
-  prop?: string;
-  status?: STATUS_DROPDOWN;
-  updated?: number;
-  weight?: number;
-  exchange?: number;
-  weight_price?: number;
+export interface INews {
   _id?: string;
+  image?: string;
+  link?: string;
+  title?: string;
+  date?: string;
+  content?: string;
+  created?: number;
+  updated?: number;
 }
 
 export enum CONTEXT_MENU_EVENT {
@@ -58,30 +51,14 @@ export enum CONTEXT_MENU_EVENT {
 }
 
 export interface EnvironmentDB {
-  name: string;
-  products: string;
-  tmdt: string;
-  index: number;
+  HighlightNews: string;
   customers: string;
 }
 
-export const ENVIRONMENT_LIST: EnvironmentDB[] = [
-  {
-    name: 'Production',
-    products: 'products',
-    tmdt: 'tmdt',
-    index: 0,
-    customers: 'customers',
-  },
-  {
-    name: 'Develop',
-    products: 'products_dev',
-    tmdt: 'tmdt_dev',
-    index: 1,
-    customers: 'customers_dev',
-  },
-];
-
+export const ENVIRONMENT_LIST: EnvironmentDB = {
+  HighlightNews: 'HighlightNews',
+  customers: 'customers',
+}
 export interface ICustomer {
   name?: string;
   phone?: string;

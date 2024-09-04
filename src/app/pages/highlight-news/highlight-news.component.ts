@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HeadersTable } from './facebook-table/facebook-table.component';
+import { HeadersTable } from './highlight-news-table/highlight-news-table.component';
 import {
   CONTEXT_MENU_EVENT,
-  FacebookProduct,
+  INews,
   ICustomer,
   STATUS_DROPDOWN,
   STATUS_LIST,
@@ -18,10 +18,10 @@ import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-facebook',
-  templateUrl: './facebook.component.html',
-  styleUrls: ['./facebook.component.scss'],
+  templateUrl: './highlight-news.component.html',
+  styleUrls: ['./highlight-news.component.scss'],
 })
-export class FacebookComponent implements OnInit, OnDestroy {
+export class HighlightNewsComponent implements OnInit, OnDestroy {
   numberDefaultConfig: HeadersTable = {
     name: '',
     field: '',
@@ -40,7 +40,7 @@ export class FacebookComponent implements OnInit, OnDestroy {
   orders = [];
 
   ref!: DynamicDialogRef;
-  selectedItems: FacebookProduct[] = [];
+  selectedItems: INews[] = [];
   isEditMode = false;
   isLoading = true;
   $destroy = new Subject<void>();
@@ -56,35 +56,20 @@ export class FacebookComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getActionsMenu();
-    this.firebaseService.loadSetting(() => {
-      this.firebaseService.getCustomers().subscribe((ls) => {
-        this.customersList = ls;
-        this.getTableHeader();
-      });
-
-      this.firebaseService.DROPDOWN_STATUS_SELECTED$.asObservable()
-        .pipe(takeUntil(this.$destroy))
-        .subscribe((status) => {
-          this.getData(status);
-        });
+    this.firebaseService.getCustomers().subscribe((ls) => {
+      this.customersList = ls;
+      this.getTableHeader();
     });
-  }
-
-  private autoCalculatePrices(
-    item: FacebookProduct,
-    header: HeadersTable,
-    value: any
-  ) {
-    console.log({ item }, header, value);
+    this.getData();
   }
 
   valueChanged(event: {
-    item: FacebookProduct;
+    item: INews;
     header: HeadersTable;
     value: any;
   }) {
     console.log(event);
-    const update: FacebookProduct = {
+    const update: INews = {
       [event.header.field]: event.value,
     };
 
@@ -99,7 +84,7 @@ export class FacebookComponent implements OnInit, OnDestroy {
         .subscribe(() => {
           this.toastService.add({
             severity: 'success',
-            summary: `Updated [${event.item.customer}]`,
+            summary: `Updated [${event.item.title}]`,
             detail: `[${event.header.name}] = ${event.value}`,
           });
           this.getData();
@@ -116,14 +101,6 @@ export class FacebookComponent implements OnInit, OnDestroy {
         icon: 'pi pi-info-circle',
         rejectButtonStyleClass: 'bg-danger',
         accept: () => {
-          this.commonService.autoCalculatePrices(
-            event.item,
-            event.header,
-            event.value
-          );
-          update.price = event.item.price;
-          update.price2 = event.item.price2;
-
           updateFunc();
         },
         reject: () => {
@@ -143,7 +120,7 @@ export class FacebookComponent implements OnInit, OnDestroy {
       baseZIndex: 10000,
       data: {
         data: this.headers,
-        callBackAdded: (output: FacebookProduct) => {
+        callBackAdded: (output: INews) => {
           this.addItem(output);
         },
       },
@@ -155,14 +132,14 @@ export class FacebookComponent implements OnInit, OnDestroy {
 
   contextMenuClick(event: {
     type: CONTEXT_MENU_EVENT;
-    value: FacebookProduct;
+    value: INews;
   }) {
     console.log(event);
     switch (event.type) {
       case CONTEXT_MENU_EVENT.DELETE_ACCEPT:
-        this.firebaseService.fbDeleteProduct(event.value._id!).subscribe(() => {
+        this.firebaseService.fbDeleteRealProduct(event.value._id!).subscribe(() => {
           this.toastService.showToastSuccess(
-            `Deleted record: ${event.value.customer}`
+            `Deleted record: ${event.value.title}`
           );
           this.getData();
         });
@@ -177,7 +154,7 @@ export class FacebookComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectMultiItems(items: FacebookProduct[]) {
+  selectMultiItems(items: INews[]) {
     this.ref = this.dialogService.open(MultiHandlerModalComponent, {
       header: 'Cập nhật nhiều đơn hàng cùng lúc!',
       contentStyle: { overflow: 'auto' },
@@ -186,7 +163,7 @@ export class FacebookComponent implements OnInit, OnDestroy {
       data: {
         items,
         data: this.headers,
-        callBackUpdated: (output: FacebookProduct, mess: string) => {
+        callBackUpdated: (output: INews, mess: string) => {
           console.log({ output });
           this.confirmationService.confirm({
             message: mess,
@@ -260,7 +237,6 @@ export class FacebookComponent implements OnInit, OnDestroy {
         type: 'dropdown',
         filter: {
           dropdownOptions: STATUS_LIST,
-          filterValue: this.firebaseService.DROPDOWN_STATUS_SELECTED$.value,
           matchMode: 'in',
           noFilterOnRow: true,
         },
@@ -362,7 +338,7 @@ export class FacebookComponent implements OnInit, OnDestroy {
               defaultFocus: 'reject',
               accept: () => {
                 this.firebaseService
-                  .fbDeleteProducts(this.selectedItems)
+                  .fbDeleteRealProducts(this.selectedItems)
                   .subscribe((res) => {
                     this.toastService.showToastSuccess(
                       `Xóa ${this.selectedItems.length} đơn hàng thành công!`
@@ -401,14 +377,12 @@ export class FacebookComponent implements OnInit, OnDestroy {
   }
 
   private getData(
-    status: STATUS_DROPDOWN[] = this.firebaseService.DROPDOWN_STATUS_SELECTED$
-      .value
   ) {
     this.isLoading = true;
     this.selectedItems = [];
     this.orders = [];
     this.firebaseService
-      .fbQueryProducts(status)
+      .fbQueryProducts()
       .pipe(
         takeUntil(this.$destroy),
         finalize(() => (this.isLoading = false))
@@ -420,14 +394,14 @@ export class FacebookComponent implements OnInit, OnDestroy {
       });
   }
 
-  private addItem(output: FacebookProduct) {
+  private addItem(output: INews) {
     this.firebaseService
       .fbAddProducts(output)
       .pipe(takeUntil(this.$destroy))
       .subscribe((res) => {
         console.log('added', res);
         this.toastService.showToastSuccess(
-          `Added new order ${output.customer} successfully!`
+          `Added new order ${output.title} successfully!`
         );
         // this.ref.close();
         this.getData();
@@ -435,8 +409,8 @@ export class FacebookComponent implements OnInit, OnDestroy {
   }
 
   private updateItem(
-    output: FacebookProduct,
-    items: FacebookProduct[],
+    output: INews,
+    items: INews[],
     mess: string
   ) {
     this.isLoading = true;

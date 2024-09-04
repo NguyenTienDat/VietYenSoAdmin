@@ -3,10 +3,10 @@ import { STATUS_DROPDOWN } from '../../../shared/models';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Component, OnInit } from '@angular/core';
-import { HeadersTable } from 'src/app/pages/facebook/facebook-table/facebook-table.component';
 import { NO_IMG } from 'src/app/shared/utils';
-import { FacebookProduct } from 'src/app/shared/models';
+import { INews } from 'src/app/shared/models';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { HeadersTable } from '../highlight-news-table/highlight-news-table.component';
 
 @Component({
   selector: 'app-add-modal',
@@ -15,10 +15,8 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 })
 export class AddModalComponent implements OnInit {
   data!: HeadersTable[];
-  output: FacebookProduct | any = {
+  output: INews | any = {
     status: STATUS_DROPDOWN.NOT_ORDER_YET,
-    weight_price: this.firebaseService.DEFAULT_WEIGHT_PRICE$.value,
-    exchange: this.firebaseService.DEFAULT_EXCHANGE$.value,
   };
 
   IMG_DEFAULT = NO_IMG;

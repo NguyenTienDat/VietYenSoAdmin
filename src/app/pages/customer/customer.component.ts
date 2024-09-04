@@ -39,9 +39,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getTableHeader();
     this.getActionsMenu();
-    this.firebaseService.loadSetting(() => {
-      this.getData();
-    });
+    this.getData();
   }
 
   valueChanged(event: { item: ICustomer; header: HeadersTable; value: any }) {

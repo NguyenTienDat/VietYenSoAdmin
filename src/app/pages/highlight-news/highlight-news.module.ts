@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FacebookComponent } from './facebook.component';
+import { HighlightNewsComponent } from './highlight-news.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { AddModalComponent } from './add-modal/add-modal.component';
@@ -11,7 +11,7 @@ import { MultiHandlerModalComponent } from './multi-handler-modal/multi-handler-
 const routes: Routes = [
   {
     path: '',
-    component: FacebookComponent,
+    component: HighlightNewsComponent,
   },
 ];
 
@@ -24,11 +24,11 @@ const routes: Routes = [
     FormsModule,
   ],
   declarations: [
-    FacebookComponent,
+    HighlightNewsComponent,
     AddModalComponent,
     MultiHandlerModalComponent,
   ],
   providers: [DialogService],
   exports: [],
 })
-export class FacebookModule {}
+export class HighlightNewsModule {}
