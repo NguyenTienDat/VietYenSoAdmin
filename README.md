@@ -2,7 +2,7 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version `15.0.4`.
 Node version `v16.13.0`
-Deploy: `https://damiekids.000webhostapp.com/pages/admin-tmdt/admin-tmdt.html`
+Deploy: `https://nguyentiendat.github.io/VietYenSoAdmin/#/pages/highlight-news`
 
 # Icon
 

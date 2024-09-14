@@ -30,9 +30,9 @@ export class FooterComponent implements OnInit {
     },
     {
       icon: 'pi pi-external-link',
-      link: 'https://damiekids.000webhostapp.com/pages/admin-tmdt/admin-tmdt.html',
+      link: 'https://nguyentiendat.github.io/VietYenSoAdmin/#/pages/highlight-news',
       tooltip:
-        'Old version: https://damiekids.000webhostapp.com/pages/admin-tmdt/admin-tmdt.html',
+        'Old version: https://nguyentiendat.github.io/VietYenSoAdmin/#/pages/highlight-news',
     },
   ];
   constructor() {}
