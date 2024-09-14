@@ -9,12 +9,9 @@ const routers: Routes = [
   {
     path: 'highlight-news',
     loadChildren: () =>
-      import('./highlight-news/highlight-news.module').then((m) => m.HighlightNewsModule),
-  },
-  {
-    path: 'customer',
-    loadChildren: () =>
-      import('./customer/customer.module').then((m) => m.CustomerModule),
+      import('./highlight-news/highlight-news.module').then(
+        (m) => m.HighlightNewsModule
+      ),
   },
   {
     path: '',

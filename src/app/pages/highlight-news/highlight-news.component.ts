@@ -1,12 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HeadersTable } from './highlight-news-table/highlight-news-table.component';
-import {
-  CONTEXT_MENU_EVENT,
-  INews,
-  ICustomer,
-  STATUS_DROPDOWN,
-  STATUS_LIST,
-} from '../../shared/models';
+import { CONTEXT_MENU_EVENT, INews } from '../../shared/models';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddModalComponent } from './add-modal/add-modal.component';
 import { FirebaseService } from '../../shared/services/firebase.service';
@@ -14,7 +8,6 @@ import { ToastService } from '../../shared/services/toast.service';
 import { MultiHandlerModalComponent } from './multi-handler-modal/multi-handler-modal.component';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { catchError, finalize, of, Subject, takeUntil } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-facebook',
@@ -22,52 +15,29 @@ import { CommonService } from 'src/app/shared/services/common.service';
   styleUrls: ['./highlight-news.component.scss'],
 })
 export class HighlightNewsComponent implements OnInit, OnDestroy {
-  numberDefaultConfig: HeadersTable = {
-    name: '',
-    field: '',
-    type: 'number',
-    filter: { noFilter: true },
-    styles: {
-      width: '80px',
-      'min-width': '5vw',
-      'text-align': 'right',
-    },
-  };
-
   headers: HeadersTable[] = [];
   actionMenuItems!: MenuItem[];
-
   orders = [];
 
   ref!: DynamicDialogRef;
   selectedItems: INews[] = [];
-  isEditMode = false;
   isLoading = true;
   $destroy = new Subject<void>();
-  customersList: ICustomer[] = [];
 
   constructor(
     private toastService: ToastService,
     public dialogService: DialogService,
     private firebaseService: FirebaseService,
-    private confirmationService: ConfirmationService,
-    private commonService: CommonService
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
     this.getActionsMenu();
-    this.firebaseService.getCustomers().subscribe((ls) => {
-      this.customersList = ls;
-      this.getTableHeader();
-    });
+    this.getTableHeader();
     this.getData();
   }
 
-  valueChanged(event: {
-    item: INews;
-    header: HeadersTable;
-    value: any;
-  }) {
+  valueChanged(event: { item: INews; header: HeadersTable; value: any }) {
     console.log(event);
     const update: INews = {
       [event.header.field]: event.value,
@@ -76,11 +46,13 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
     const updateFunc = () => {
       this.firebaseService
         .fbUpdateProduct(update, event?.item?._id || '')
-        .pipe(takeUntil(this.$destroy),
-        catchError((err) => {
-          console.error('updateFunc err', err);
-          return of(null);
-        }))
+        .pipe(
+          takeUntil(this.$destroy),
+          catchError((err) => {
+            console.error('updateFunc err', err);
+            return of(null);
+          })
+        )
         .subscribe(() => {
           this.toastService.add({
             severity: 'success',
@@ -130,19 +102,18 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
     // });
   }
 
-  contextMenuClick(event: {
-    type: CONTEXT_MENU_EVENT;
-    value: INews;
-  }) {
+  contextMenuClick(event: { type: CONTEXT_MENU_EVENT; value: INews }) {
     console.log(event);
     switch (event.type) {
       case CONTEXT_MENU_EVENT.DELETE_ACCEPT:
-        this.firebaseService.fbDeleteRealProduct(event.value._id!).subscribe(() => {
-          this.toastService.showToastSuccess(
-            `Deleted record: ${event.value.title}`
-          );
-          this.getData();
-        });
+        this.firebaseService
+          .fbDeleteRealProduct(event.value._id!)
+          .subscribe(() => {
+            this.toastService.showToastSuccess(
+              `Deleted record: ${event.value.title}`
+            );
+            this.getData();
+          });
         break;
       case CONTEXT_MENU_EVENT.DELETE_REJECT_CANCEL:
         break;
@@ -178,10 +149,6 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         },
       },
     });
-
-    // this.ref.onClose.subscribe(() => {
-    //   this.getData();
-    // });
   }
 
   private getTableHeader() {
@@ -193,36 +160,24 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         className: 'image-col',
         filter: { noFilter: true },
         styles: {
-          'min-width': '100px',
-          width: '100px',
+          'min-width': '150px',
+          'max-width': '150px',
+          width: '150px',
         },
       },
       {
-        name: 'Phân loại',
-        field: 'prop',
+        name: 'Tiêu đề',
+        field: 'title',
         type: 'string',
-        filter: { noFilter: true },
+        filter: {},
         styles: {
-          'min-width': '100px',
-          width: '100px',
+          'min-width': '20%',
+          width: '300px',
         },
       },
       {
-        name: 'Khách hàng',
-        field: 'customer',
-        type: 'dropdown',
-        filter: {
-          dropdownOptions: this.customersList,
-          filterValue: [],
-          matchMode: 'in',
-        },
-        styles: {
-          wordBreak: 'break-all',
-        },
-      },
-      {
-        name: 'Ghi chú',
-        field: 'description',
+        name: 'Nội dung ngắn',
+        field: 'content',
         type: 'string',
         filter: {},
         styles: {
@@ -232,98 +187,39 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         },
       },
       {
-        name: 'Trạng thái',
-        field: 'status',
-        type: 'dropdown',
-        filter: {
-          dropdownOptions: STATUS_LIST,
-          matchMode: 'in',
-          noFilterOnRow: true,
-        },
-        styles: {
-          width: '150px',
-          'min-width': '150px',
-          'text-align': 'center',
-        },
-      },
-      {
-        name: 'MVĐ',
-        field: 'orderID',
+        name: 'Link',
+        field: 'link',
         type: 'string',
         filter: {},
         styles: {
-          'min-width': '50px',
+          wordBreak: 'break-all',
+          width: '250px',
+          'min-width': '100px',
         },
       },
       {
-        ...this.numberDefaultConfig,
-        name: 'Tệ',
-        field: 'CNY_price',
-        className: 'text-danger',
+        name: 'Ngày cập nhật',
+        field: 'updated',
+        type: 'string',
+        filter: {},
+        styles: {
+          'min-width': '250px',
+        },
       },
       {
-        ...this.numberDefaultConfig,
-        name: 'Cân',
-        field: 'weight',
-        className: 'text-danger',
-      },
-      {
-        ...this.numberDefaultConfig,
-        name: 'Giá cân',
-        field: 'weight_price',
-        className: 'text-danger',
-      },
-      {
-        ...this.numberDefaultConfig,
-        name: 'Tỉ giá',
-        field: 'exchange',
-        className: 'text-danger',
-      },
-      {
-        ...this.numberDefaultConfig,
-        name: 'Giá nhập',
-        field: 'price',
-        className: 'text-info',
-      },
-      {
-        ...this.numberDefaultConfig,
-        name: 'Giá bán',
-        field: 'price2',
-        className: 'text-primary',
+        name: 'Ngày tạo',
+        field: 'created',
+        type: 'string',
+        filter: {},
+        styles: {
+          'min-width': '250px',
+        },
       },
     ];
   }
 
   private getActionsMenu() {
     this.actionMenuItems = [
-      {
-        icon: this.isEditMode ? 'pi pi-eye' : 'pi pi-pencil',
-        tooltip: this.isEditMode
-          ? 'Sửa nhiều dòng cùng lúc'
-          : 'Trở về chế độ xem',
-        command: () => {
-          if (this.isEditMode) {
-            this.isEditMode = false;
-            this.getActionsMenu();
-          } else {
-            this.confirmationService.confirm({
-              message: `Các thay đổi sẽ được áp dụng ngay lập tức, dev không thể khôi phục khi bạn lỡ tay sửa nhầm ;) `,
-              header: 'EDIT MODE',
-              icon: 'pi pi-info-circle',
-              acceptButtonStyleClass: 'bg-danger',
-              rejectButtonStyleClass: 'bg-success',
-              accept: () => {
-                this.isEditMode = true;
-                this.getActionsMenu();
-              },
-              reject: () => {
-                this.isEditMode = false;
-                this.getActionsMenu();
-              },
-            });
-          }
-        },
-      },
       {
         icon: 'pi pi-trash',
         tooltip: 'Xóa các dòng đã chọn',
@@ -376,8 +272,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  private getData(
-  ) {
+  private getData() {
     this.isLoading = true;
     this.selectedItems = [];
     this.orders = [];
@@ -403,16 +298,11 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         this.toastService.showToastSuccess(
           `Added new order ${output.title} successfully!`
         );
-        // this.ref.close();
         this.getData();
       });
   }
 
-  private updateItem(
-    output: INews,
-    items: INews[],
-    mess: string
-  ) {
+  private updateItem(output: INews, items: INews[], mess: string) {
     this.isLoading = true;
     this.firebaseService
       .fbUpdateProducts(output, items)
@@ -420,9 +310,9 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         takeUntil(this.$destroy),
         catchError((err) => {
           console.error('fbUpdateProducts err', err);
-          return of(null)
+          return of(null);
         }),
-        finalize(() => (this.isLoading = false)),
+        finalize(() => (this.isLoading = false))
       )
       .subscribe((res) => {
         this.toastService.showToastSuccess(`${mess} successfully!`);

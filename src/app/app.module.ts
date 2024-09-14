@@ -13,13 +13,6 @@ import { DecimalPipe } from '@angular/common';
 import { SharedModule } from './shared/shared.module';
 
 const firebaseConfig = {
-  // apiKey: 'AIzaSyAmWtEdw-4PjzdDXkYFKEyxz1S2L38vZ1o',
-  // authDomain: 'dathangjs.firebaseapp.com',
-  // projectId: 'dathangjs',
-  // storageBucket: 'dathangjs.appspot.com',
-  // messagingSenderId: '118350461604',
-  // appId: '1:118350461604:web:522c2624e4248f51bc0431',
-
   apiKey: "AIzaSyAE7sbmviFvNf5L69naqHmUBTqAE060F78",
   authDomain: "reminder-c8fb6.firebaseapp.com",
   projectId: "reminder-c8fb6",
@@ -30,16 +23,6 @@ const firebaseConfig = {
 };
 
 
-
-// const firebaseConfig = {
-//   apiKey: 'AIzaSyCLAwZp9yA6nO8T9_zrnVcuLwjfaPNhfLA',
-//   authDomain: 'dathangangular.firebaseapp.com',
-//   projectId: 'dathangangular',
-//   storageBucket: 'dathangangular.appspot.com',
-//   messagingSenderId: '734578423279',
-//   appId: '1:734578423279:web:9b39751e9fef168f6ef21a',
-//   measurementId: 'G-V049MJKQBG',
-// };
 
 @NgModule({
   declarations: [AppComponent],

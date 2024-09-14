@@ -54,7 +54,6 @@ export interface HeadersTable {
   styleUrls: ['./highlight-news-table.component.scss'],
 })
 export class CustomTableComponent implements OnInit, OnChanges {
-  @Input() isEditMode = false;
   @Input() dataTable: INews[] = [];
   @Input() headers!: HeadersTable[];
   @Output() valueChanged = new EventEmitter();
@@ -156,12 +155,7 @@ export class CustomTableComponent implements OnInit, OnChanges {
     });
   }
 
-  keyHandler(
-    event: any,
-    item: INews,
-    header: HeadersTable,
-    value: any
-  ) {
+  keyHandler(event: any, item: INews, header: HeadersTable, value: any) {
     // console.log('keyHandler', item, event);
     if (event.key === 'Enter' || event.keyCode === 13) {
       console.log('Enter', item);

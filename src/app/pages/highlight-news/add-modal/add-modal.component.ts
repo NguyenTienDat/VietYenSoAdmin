@@ -1,5 +1,4 @@
 import { CommonService } from '../../../shared/services/common.service';
-import { STATUS_DROPDOWN } from '../../../shared/models';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Component, OnInit } from '@angular/core';
@@ -15,9 +14,7 @@ import { HeadersTable } from '../highlight-news-table/highlight-news-table.compo
 })
 export class AddModalComponent implements OnInit {
   data!: HeadersTable[];
-  output: INews | any = {
-    status: STATUS_DROPDOWN.NOT_ORDER_YET,
-  };
+  output: INews | any = {};
 
   IMG_DEFAULT = NO_IMG;
 
@@ -35,6 +32,7 @@ export class AddModalComponent implements OnInit {
 
   changeValue(td: HeadersTable, value: any) {
     this.output[td.field] = value;
+    this.output.updated = Date.now();
     console.log(td, value);
     console.log('output', this.output);
     this.output = JSON.parse(JSON.stringify(this.output));
@@ -42,10 +40,6 @@ export class AddModalComponent implements OnInit {
 
   submit() {
     console.log('Submit', this.output);
-    if (!this.output.customer) {
-      this.toastService.showToastWarning('Chưa nhập tên khách hàng!');
-      return;
-    }
     this.dialogService.data.callBackAdded(this.output);
   }
 
