@@ -8,6 +8,7 @@ import { ToastService } from '../../shared/services/toast.service';
 import { MultiHandlerModalComponent } from './multi-handler-modal/multi-handler-modal.component';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { catchError, finalize, of, Subject, takeUntil } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-facebook',
@@ -17,12 +18,13 @@ import { catchError, finalize, of, Subject, takeUntil } from 'rxjs';
 export class HighlightNewsComponent implements OnInit, OnDestroy {
   headers: HeadersTable[] = [];
   actionMenuItems!: MenuItem[];
-  orders = [];
+  orders: INews[] = [];
 
   ref!: DynamicDialogRef;
   selectedItems: INews[] = [];
   isLoading = true;
   $destroy = new Subject<void>();
+  formatDate = 'hh:mm - DD/MM/YYYY';
 
   constructor(
     private toastService: ToastService,
@@ -85,8 +87,9 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
   }
 
   showAddModal() {
+    this.getTableHeader();
     this.ref = this.dialogService.open(AddModalComponent, {
-      header: 'Đơn hàng mới',
+      header: 'Thêm tin mới',
       contentStyle: { overflow: 'auto' },
       maximizable: true,
       baseZIndex: 10000,
@@ -120,38 +123,15 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
       case CONTEXT_MENU_EVENT.CLONE_A_COPY:
         this.addItem(event.value);
         break;
+      case CONTEXT_MENU_EVENT.VIEW_DETAIL:
+        this.viewItem(event.value);
+        break;
       default:
         break;
     }
   }
 
-  selectMultiItems(items: INews[]) {
-    this.ref = this.dialogService.open(MultiHandlerModalComponent, {
-      header: 'Cập nhật nhiều đơn hàng cùng lúc!',
-      contentStyle: { overflow: 'auto' },
-      maximizable: true,
-      baseZIndex: 10000,
-      data: {
-        items,
-        data: this.headers,
-        callBackUpdated: (output: INews, mess: string) => {
-          console.log({ output });
-          this.confirmationService.confirm({
-            message: mess,
-            header: 'Update Confirmation',
-            icon: 'pi pi-info-circle',
-            rejectButtonStyleClass: 'bg-danger',
-            accept: () => {
-              this.updateItem(output, items, mess);
-            },
-            reject: () => {},
-          });
-        },
-      },
-    });
-  }
-
-  private getTableHeader() {
+  private getTableHeader(pathValue?: INews) {
     this.headers = [
       {
         name: 'Image',
@@ -164,6 +144,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
           'max-width': '150px',
           width: '150px',
         },
+        defaultIfNoData: pathValue?.imageLink,
       },
       {
         name: 'Tiêu đề',
@@ -174,6 +155,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
           'min-width': '20%',
           width: '300px',
         },
+        defaultIfNoData: pathValue?.title,
       },
       {
         name: 'Nội dung ngắn',
@@ -185,6 +167,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
           width: '100%',
           'min-width': '100px',
         },
+        defaultIfNoData: pathValue?.content,
       },
       {
         name: 'Link',
@@ -193,27 +176,22 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         filter: {},
         styles: {
           wordBreak: 'break-all',
-          width: '250px',
+          width: '350px',
           'min-width': '100px',
         },
-      },
-      {
-        name: 'Ngày cập nhật',
-        field: 'updated',
-        type: 'string',
-        filter: {},
-        styles: {
-          'min-width': '250px',
-        },
+        defaultIfNoData: pathValue?.link,
       },
       {
         name: 'Ngày tạo',
-        field: 'created',
+        field: 'createdTxt',
+        readonly: true,
         type: 'string',
         filter: {},
         styles: {
           'min-width': '250px',
+          'white-space': 'pre-wrap',
         },
+        defaultIfNoData: pathValue?.createdTxt,
       },
     ];
   }
@@ -226,7 +204,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         command: () => {
           if (this.selectedItems.length) {
             this.confirmationService.confirm({
-              message: `Xóa ${this.selectedItems.length} đơn hàng đang chọn?`,
+              message: `Xóa ${this.selectedItems.length} tin đang chọn?`,
               header: 'Delete Confirmation',
               icon: 'pi pi-info-circle',
               acceptButtonStyleClass: 'bg-danger',
@@ -237,7 +215,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
                   .fbDeleteRealProducts(this.selectedItems)
                   .subscribe((res) => {
                     this.toastService.showToastSuccess(
-                      `Xóa ${this.selectedItems.length} đơn hàng thành công!`
+                      `Xóa ${this.selectedItems.length} tin thành công!`
                     );
                     this.getData();
                   });
@@ -246,19 +224,7 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
             });
           } else {
             this.toastService.showToastWarning(
-              'Hãy chọn ít nhất 1 đơn hàng để xóa!'
-            );
-          }
-        },
-      },
-      {
-        icon: 'pi pi-external-link',
-        command: () => {
-          if (this.selectedItems.length) {
-            this.selectMultiItems(this.selectedItems);
-          } else {
-            this.toastService.showToastWarning(
-              'Hãy chọn ít nhất 1 đơn hàng để update!'
+              'Hãy chọn ít nhất 1 tin để xóa!'
             );
           }
         },
@@ -282,11 +248,33 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
         takeUntil(this.$destroy),
         finalize(() => (this.isLoading = false))
       )
-      .subscribe((res: any) => {
+      .subscribe((res: INews[]) => {
         console.log(res);
-        res.sort((a: any, b: any) => (a.created < b.created ? 1 : -1));
+        res.map((news) => {
+          news.updatedTxt = moment(news.updated).format(this.formatDate);
+          news.createdTxt = moment(news.created).format(this.formatDate);
+        });
         this.orders = res;
       });
+  }
+
+  private viewItem(items: INews) {
+    this.getTableHeader(items);
+    this.ref = this.dialogService.open(AddModalComponent, {
+      header: 'Cập nhật thông tin',
+      contentStyle: { overflow: 'auto' },
+      maximizable: true,
+      baseZIndex: 10000,
+      data: {
+        items,
+        data: this.headers,
+        callBackAdded: (output: INews) => {
+          output._id = items._id;
+          console.log({ output });
+          this.updateItem(output, `[Cập nhật thành công] ${output.title}`);
+        },
+      },
+    });
   }
 
   private addItem(output: INews) {
@@ -302,10 +290,11 @@ export class HighlightNewsComponent implements OnInit, OnDestroy {
       });
   }
 
-  private updateItem(output: INews, items: INews[], mess: string) {
+  private updateItem(output: INews, mess: string) {
+    if (!output._id) return;
     this.isLoading = true;
     this.firebaseService
-      .fbUpdateProducts(output, items)
+      .fbUpdateProduct(output, output._id)
       .pipe(
         takeUntil(this.$destroy),
         catchError((err) => {

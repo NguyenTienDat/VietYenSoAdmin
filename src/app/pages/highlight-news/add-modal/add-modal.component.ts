@@ -26,6 +26,9 @@ export class AddModalComponent implements OnInit {
     public commonService: CommonService
   ) {
     this.data = this.dialogService.data.data;
+    this.data?.forEach((item) => {
+      this.output[item.field] = item.defaultIfNoData;
+    });
   }
 
   ngOnInit() {}

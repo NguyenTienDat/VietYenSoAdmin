@@ -18,14 +18,14 @@ export class LeftMenuComponent {
   leftMenu: LeftMenu[] = [
     // {
     //   name: 'Facebook',
-    //   tooltip: 'Quản lý các đơn hàng bán trên Facebook',
+    //   tooltip: 'Quản lý các tin bán trên Facebook',
     //   path: 'pages/facebook',
     //   icon: 'pi pi-facebook',
     // },
     // {
     //   name: 'TMĐT',
     //   path: 'pages/tmdt',
-    //   tooltip: 'Quản lý các đơn hàng bán các sàn như Shopee, Lazada',
+    //   tooltip: 'Quản lý các tin bán các sàn như Shopee, Lazada',
     //   icon: 'pi pi-shopping-cart',
     // },
     // {

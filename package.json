@@ -28,6 +28,7 @@
     "firebase": "9.12.1",
     "firebase-tools": "^12.9.1",
     "firebaseui": "^6.1.0",
+    "moment": "^2.30.1",
     "primeicons": "^6.0.1",
     "primeng": "^15.4.1",
     "rxfire": "6.0.3",

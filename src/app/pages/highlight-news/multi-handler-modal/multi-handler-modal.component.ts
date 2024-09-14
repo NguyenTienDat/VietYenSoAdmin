@@ -136,7 +136,7 @@ export class MultiHandlerModalComponent implements OnInit {
       updateInfo,
       `Cập nhật ${countFieldsChange} thông tin  ${fieldsName.join(', ')} cho ${
         this.items.length
-      } đơn hàng.`
+      } tin.`
     );
   }
 

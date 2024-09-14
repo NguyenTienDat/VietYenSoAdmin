@@ -46,6 +46,7 @@ export interface HeadersTable {
   filter: ConfigFilterTable;
   styles?: any;
   defaultIfNoData?: any;
+  readonly?: boolean;
 }
 
 @Component({
@@ -81,6 +82,11 @@ export class CustomTableComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.contextMenu = [
       {
+        label: 'View detail',
+        icon: 'pi pi-fw pi-file',
+        command: () => this.viewDetail(),
+      },
+      {
         label: 'Clone a copy',
         icon: 'pi pi-fw pi-copy',
         command: () => this.cloneACopy(),
@@ -95,6 +101,13 @@ export class CustomTableComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.currentTime = Date.now();
+  }
+
+  viewDetail() {
+    this.contextMenuOutput.emit({
+      type: CONTEXT_MENU_EVENT.VIEW_DETAIL,
+      value: this.selectedProduct,
+    });
   }
 
   cloneACopy() {

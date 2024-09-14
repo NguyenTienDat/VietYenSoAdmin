@@ -35,19 +35,22 @@ export const enum STATUS_DROPDOWN {
 }
 export interface INews {
   _id?: string;
-  image?: string;
+  imageLink?: string;
   link?: string;
   title?: string;
   date?: string;
   content?: string;
   created?: number;
   updated?: number;
+  createdTxt?: string;
+  updatedTxt?: string;
 }
 
 export enum CONTEXT_MENU_EVENT {
   'DELETE_ACCEPT',
   'DELETE_REJECT_CANCEL',
   'CLONE_A_COPY',
+  'VIEW_DETAIL',
 }
 
 export interface EnvironmentDB {

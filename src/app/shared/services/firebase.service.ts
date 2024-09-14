@@ -65,7 +65,7 @@ export class FirebaseService {
   }
 
   fbQueryProducts(): Observable<INews[]> {
-    const q = query(this.newsCol);
+    const q = query(this.newsCol, orderBy('created', 'desc'));
     return this.getCustomDocs(q).pipe(
       catchError((err, caught) => {
         this.handerErr(err);

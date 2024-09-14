@@ -98,22 +98,6 @@
           </p-columnFilter>
         </div>
       </th>
-      <th class="table-header" pSortableColumn="title">
-        <div class="flex align-items-center">
-          Ngày cập nhật
-          <p-columnFilter
-            type="text"
-            field="title"
-            display="menu"
-            [matchMode]="'contains'"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showClearButton]="false"
-          >
-          </p-columnFilter>
-        </div>
-      </th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-product>
@@ -174,16 +158,21 @@
               <ng-container *ngSwitchCase="'string'">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <input
-                      pInputText
-                      [ngStyle]="td.styles"
-                      [(ngModel)]="product[td.field]"
-                      (change)="changeValue(product, td, product[td.field])"
-                      (keydown)="
-                        keyHandler($event, product, td, product[td.field])
-                      "
-                    />
-                    <span class="invisible"> {{ product[td.field] }}</span>
+                    <ng-container *ngIf="td.readonly">
+                      {{ product[td.field] }}
+                    </ng-container>
+                    <ng-container *ngIf="!td.readonly">
+                      <textarea
+                        pInputTextarea
+                        [ngStyle]="td.styles"
+                        rows="6"
+                        [(ngModel)]="product[td.field]"
+                        (change)="changeValue(product, td, product[td.field])"
+                        (keydown)="
+                          keyHandler($event, product, td, product[td.field])
+                        "
+                      ></textarea>
+                    </ng-container>
                   </ng-template>
                   <ng-template pTemplate="output">
                     {{ product[td.field] }}
