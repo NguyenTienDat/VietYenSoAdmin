@@ -1,13 +1,13 @@
 {
-  "name": "dat-hang-angular",
+  "name": "viet-yen-so-admin",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:local": "ng build  --configuration production --base-href /dist/dat-hang-angular/ --deploy-url /dist/dat-hang-angular/",
-    "build:github": "ng build --output-path docs --base-href /DatHangAngular/",
-    "deploy": "ng deploy --base-href /DatHangAngular/ --no-silent  --name NguyenTienDat --email datnt.it.pro@gmail.com",
+    "build:local": "ng build  --configuration production --base-href /dist/viet-yen-so-admin/ --deploy-url /dist/viet-yen-so-admin/",
+    "build:github": "ng build --output-path docs --base-href /VietYenSoAdmin/",
+    "deploy": "ng deploy --base-href /VietYenSoAdmin/ --no-silent  --name NguyenTienDat --email datnt.it.pro@gmail.com",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
