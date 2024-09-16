@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { NO_IMG, encodeImageFileAsURL } from '../utils';
 
 @Component({
@@ -7,6 +7,7 @@ import { NO_IMG, encodeImageFileAsURL } from '../utils';
   styleUrls: ['./image-select.component.scss'],
 })
 export class ImageSelectComponent implements OnInit {
+  @Input() imgSrc?: string;
   @Output() imageOutput = new EventEmitter();
   IMG_DEFAULT = NO_IMG;
 

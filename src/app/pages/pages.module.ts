@@ -7,27 +7,15 @@ import { NbLayoutModule } from '@nebular/theme';
 import { ToastService } from '../shared/services/toast.service';
 const routers: Routes = [
   {
-    path: 'facebook',
+    path: 'highlight-news',
     loadChildren: () =>
-      import('./facebook/facebook.module').then((m) => m.FacebookModule),
-  },
-  {
-    path: 'tmdt',
-    loadChildren: () => import('./tmdt/tmdt.module').then((m) => m.TmdtModule),
-  },
-  {
-    path: 'setting',
-    loadChildren: () =>
-      import('./setting/setting.module').then((m) => m.SettingModule),
-  },
-  {
-    path: 'customer',
-    loadChildren: () =>
-      import('./customer/customer.module').then((m) => m.CustomerModule),
+      import('./highlight-news/highlight-news.module').then(
+        (m) => m.HighlightNewsModule
+      ),
   },
   {
     path: '',
-    redirectTo: 'facebook',
+    redirectTo: 'highlight-news',
     pathMatch: 'full',
   },
 ];

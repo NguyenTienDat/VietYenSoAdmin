@@ -3,10 +3,10 @@ import { STATUS_DROPDOWN } from '../../../shared/models';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { HeadersTable } from 'src/app/pages/facebook/facebook-table/facebook-table.component';
 import { NO_IMG, encodeImageFileAsURL, renderLink } from 'src/app/shared/utils';
-import { FacebookProduct } from 'src/app/shared/models';
+import { INews } from 'src/app/shared/models';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { HeadersTable } from '../highlight-news-table/highlight-news-table.component';
 
 @Component({
   selector: 'app-multi-handler-modal',
@@ -19,7 +19,7 @@ export class MultiHandlerModalComponent implements OnInit {
   willChangeHeader: HeadersTable[] | any[] = [];
 
   items = [];
-  output: FacebookProduct | any = {};
+  output: INews | any = {};
 
   IMG_DEFAULT = NO_IMG;
   renderLink = renderLink;
@@ -62,8 +62,6 @@ export class MultiHandlerModalComponent implements OnInit {
 
   ngOnInit() {
     this.output.status = STATUS_DROPDOWN.ORDERED;
-    this.output.weight_price = this.firebaseService.DEFAULT_WEIGHT_PRICE$.value;
-    this.output.exchange = this.firebaseService.DEFAULT_EXCHANGE$.value;
   }
 
   changeValue(td: any, event: any) {
@@ -138,7 +136,7 @@ export class MultiHandlerModalComponent implements OnInit {
       updateInfo,
       `Cập nhật ${countFieldsChange} thông tin  ${fieldsName.join(', ')} cho ${
         this.items.length
-      } đơn hàng.`
+      } tin.`
     );
   }
 

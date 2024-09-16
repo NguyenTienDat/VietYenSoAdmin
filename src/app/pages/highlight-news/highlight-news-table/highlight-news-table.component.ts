@@ -14,7 +14,7 @@ import {
   encodeImageFileAsURL,
   renderLink,
 } from '../../../shared/utils';
-import { CONTEXT_MENU_EVENT, ITmdt } from '../../../shared/models';
+import { CONTEXT_MENU_EVENT, INews } from '../../../shared/models';
 import { ConfirmEventType, ConfirmationService, MenuItem } from 'primeng/api';
 import { CommonService } from '../../../shared/services/common.service';
 
@@ -40,32 +40,33 @@ interface ConfigFilterTable {
 export interface HeadersTable {
   name: string;
   field: string;
-  type: 'string' | 'image' | 'number';
+  type: 'string' | 'image' | 'number' | 'link' | 'dropdown';
   className?: string;
   headerClassName?: string;
   filter: ConfigFilterTable;
   styles?: any;
   defaultIfNoData?: any;
-  rowspan?: any;
-  colspan?: any;
+  readonly?: boolean;
 }
 
 @Component({
-  selector: 'tmdt-table',
-  templateUrl: './tmdt-table.component.html',
-  styleUrls: ['./tmdt-table.component.scss'],
+  selector: 'highlight-news-table',
+  templateUrl: './highlight-news-table.component.html',
+  styleUrls: ['./highlight-news-table.component.scss'],
 })
-export class TmdtTableComponent implements OnInit, OnChanges {
-  @Input() dataTable: ITmdt[] = [];
+export class CustomTableComponent implements OnInit, OnChanges {
+  @Input() dataTable: INews[] = [];
   @Input() headers!: HeadersTable[];
   @Output() valueChanged = new EventEmitter();
+  @Output() selectMultiItems = new EventEmitter<INews[]>();
   @Output() contextMenuOutput = new EventEmitter<{
     type: CONTEXT_MENU_EVENT;
     value: any;
   }>();
 
+  @Input() selectedItems: INews[] = [];
   @Input() isLoading!: boolean;
-  selectedItem!: ITmdt;
+  selectedProduct!: INews;
   contextMenu!: MenuItem[];
   renderLink = renderLink;
   IMG_DEFAULT = NO_IMG;
@@ -80,6 +81,11 @@ export class TmdtTableComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.contextMenu = [
+      {
+        label: 'View detail',
+        icon: 'pi pi-fw pi-file',
+        command: () => this.viewDetail(),
+      },
       {
         label: 'Clone a copy',
         icon: 'pi pi-fw pi-copy',
@@ -97,33 +103,41 @@ export class TmdtTableComponent implements OnInit, OnChanges {
     this.currentTime = Date.now();
   }
 
+  viewDetail() {
+    this.contextMenuOutput.emit({
+      type: CONTEXT_MENU_EVENT.VIEW_DETAIL,
+      value: this.selectedProduct,
+    });
+  }
+
   cloneACopy() {
+    console.log('Copy a row', this.selectedItems);
     this.contextMenuOutput.emit({
       type: CONTEXT_MENU_EVENT.CLONE_A_COPY,
-      value: this.selectedItem,
+      value: this.selectedProduct,
     });
-    this.selectedItem = {};
+    this.selectedProduct = {};
   }
 
   confirmDelete() {
     this.confirmationService.confirm({
-      message: `Do you want to delete this record: ${this.selectedItem.sku}?`,
+      message: `Do you want to delete this record: ${this.selectedProduct.title}?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       rejectButtonStyleClass: 'bg-danger',
       accept: () => {
         this.contextMenuOutput.emit({
           type: CONTEXT_MENU_EVENT.DELETE_ACCEPT,
-          value: this.selectedItem,
+          value: this.selectedProduct,
         });
-        this.selectedItem = {};
+        this.selectedProduct = {};
       },
       reject: (type: ConfirmEventType) => {
         this.contextMenuOutput.emit({
           type: CONTEXT_MENU_EVENT.DELETE_REJECT_CANCEL,
-          value: this.selectedItem,
+          value: this.selectedProduct,
         });
-        this.selectedItem = {};
+        this.selectedProduct = {};
       },
     });
   }
@@ -137,7 +151,7 @@ export class TmdtTableComponent implements OnInit, OnChanges {
     inputImg.click();
   }
 
-  changeValue(item: ITmdt, header: HeadersTable, value: any) {
+  changeValue(item: INews, header: HeadersTable, value: any) {
     console.log({ item }, header, value);
     this.valueChanged.emit({ item, header, value });
   }
@@ -154,12 +168,20 @@ export class TmdtTableComponent implements OnInit, OnChanges {
     });
   }
 
-  keyHandler(event: any, item: ITmdt, header: HeadersTable, value: any) {
+  keyHandler(event: any, item: INews, header: HeadersTable, value: any) {
     // console.log('keyHandler', item, event);
     if (event.key === 'Enter' || event.keyCode === 13) {
       console.log('Enter', item);
       this.changeValue(item, header, value);
     }
+  }
+
+  openMultiHandlerModal() {
+    this.selectMultiItems.emit(this.selectedItems);
+  }
+
+  dropdownChanged(td: HeadersTable, e: any) {
+    console.log({ td, e });
   }
 
   checkNewlyUpdate(updated: number) {

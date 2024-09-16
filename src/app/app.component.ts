@@ -16,7 +16,6 @@ export class AppComponent {
     private router: Router,
     private authService: AuthService
   ) {
-    this.firebaseService.loadSetting();
 
     router.events
       .pipe(filter((event) => event instanceof NavigationEnd))

@@ -1,16 +1,35 @@
 <div class="wrap-modal">
   <div class="wrap-input">
     <ng-container *ngFor="let td of data">
-      <div class="d-flex justify-content-between my-2">
+      <div
+        class="d-flex justify-content-between my-2"
+        *ngIf="
+          td.field !== 'updated' &&
+          td.field !== 'created' &&
+          td.field !== 'createdTxt'
+        "
+      >
         <div class="label">
           {{ td.name }}
         </div>
         <div class="value-input">
           <ng-container [ngSwitch]="td.type">
             <ng-container *ngSwitchCase="'image'">
-              <app-image-select
-                (imageOutput)="output[td.field] = $event"
-              ></app-image-select>
+              <ng-container>
+                <app-image-select
+                  (imageOutput)="output[td.field] = $event"
+                  [imgSrc]="output[td.field]"
+                ></app-image-select>
+                <br />
+                <textarea
+                  placeholder="Image link"
+                  cols="25"
+                  pInputTextarea
+                  [autoResize]="false"
+                  [(ngModel)]="output[td.field]"
+                  (ngModelChange)="changeValue(td, $event)"
+                ></textarea>
+              </ng-container>
             </ng-container>
 
             <ng-container *ngSwitchCase="'link'">
@@ -24,11 +43,14 @@
             </ng-container>
 
             <ng-container *ngSwitchCase="'string'">
-              <input
-                pInputText
+              <textarea
+                pInputTextarea
+                [autoResize]="false"
+                cols="30"
+                rows="8"
                 [(ngModel)]="output[td.field]"
                 (ngModelChange)="changeValue(td, $event)"
-              />
+              ></textarea>
             </ng-container>
 
             <ng-container *ngSwitchCase="'number'">
@@ -38,9 +60,6 @@
                 [maxFractionDigits]="5"
                 [inputStyleClass]="td.className ?? '' + 'input-number'"
                 [(ngModel)]="output[td.field]"
-                (ngModelChange)="
-                  commonService.autoCalculatePrices(output, td, $event)
-                "
               ></p-inputNumber>
             </ng-container>
 
@@ -89,7 +108,7 @@
     ></p-button>
 
     <p-button
-      label="Add"
+      label="Xác nhận"
       styleClass="p-button-success"
       icon="pi pi-plus"
       (onClick)="submit()"

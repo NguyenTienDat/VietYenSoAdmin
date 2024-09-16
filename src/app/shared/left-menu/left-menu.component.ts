@@ -16,30 +16,30 @@ interface LeftMenu {
 })
 export class LeftMenuComponent {
   leftMenu: LeftMenu[] = [
-    {
-      name: 'Facebook',
-      tooltip: 'Quản lý các đơn hàng bán trên Facebook',
-      path: 'pages/facebook',
-      icon: 'pi pi-facebook',
-    },
-    {
-      name: 'TMĐT',
-      path: 'pages/tmdt',
-      tooltip: 'Quản lý các đơn hàng bán các sàn như Shopee, Lazada',
-      icon: 'pi pi-shopping-cart',
-    },
-    {
-      name: 'Customer',
-      path: 'pages/customer',
-      tooltip: 'Quản lý khách hàng',
-      icon: 'pi pi-user-edit',
-    },
-    {
-      name: 'Setting',
-      path: 'pages/setting',
-      tooltip: 'Tùy biến cấu hình',
-      icon: 'pi pi-cog',
-    },
+    // {
+    //   name: 'Facebook',
+    //   tooltip: 'Quản lý các tin bán trên Facebook',
+    //   path: 'pages/facebook',
+    //   icon: 'pi pi-facebook',
+    // },
+    // {
+    //   name: 'TMĐT',
+    //   path: 'pages/tmdt',
+    //   tooltip: 'Quản lý các tin bán các sàn như Shopee, Lazada',
+    //   icon: 'pi pi-shopping-cart',
+    // },
+    // {
+    //   name: 'Customer',
+    //   path: 'pages/customer',
+    //   tooltip: 'Quản lý khách hàng',
+    //   icon: 'pi pi-user-edit',
+    // },
+    // {
+    //   name: 'Setting',
+    //   path: 'pages/setting',
+    //   tooltip: 'Tùy biến cấu hình',
+    //   icon: 'pi pi-cog',
+    // },
   ];
 
   constructor(
